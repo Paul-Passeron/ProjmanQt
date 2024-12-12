@@ -14,7 +14,7 @@ class ProjectManager : public QObject {
 
 public:
   ProjectManager();
-  // ~ProjectManager();
+  ~ProjectManager();
   Project *fromLanguage(Language *lang, std::string name,
                         std::string description);
   void createProject(Project *project);
@@ -22,8 +22,9 @@ public:
   Project *getProject(std::string name);
   Project *getCurrentProject();
   void setCurrentProject(std::string name);
-// signals:
-  // Q_SIGNAL void currentProjectChanged();
+
+signals:
+  void currentProjectChanged();
 };
 
 #endif // PROJECTMANAGER_H

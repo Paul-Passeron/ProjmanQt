@@ -6,6 +6,10 @@
 
 ProjectManager::ProjectManager() : current_project(-1) {}
 
+ProjectManager::~ProjectManager() {
+  // DO NOTHING FOR NOW
+}
+
 Project *ProjectManager::getCurrentProject() {
   if (current_project >= (int)projects.size() || current_project < 0) {
     return nullptr;
@@ -18,7 +22,7 @@ void ProjectManager::setCurrentProject(std::string name) {
   for (size_t i = 0; i < projects.size(); i++) {
     if (projects.at(i)->getName() == name) {
       current_project = i;
-      // emit currentProjectChanged();
+      emit currentProjectChanged();
       return;
     }
   }
@@ -57,5 +61,3 @@ Project *ProjectManager::getProject(std::string name) {
   }
   return nullptr;
 }
-
-

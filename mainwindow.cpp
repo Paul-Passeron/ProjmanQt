@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
   QAction *act = new QAction("Dummy\n", this);
   ui->menuRun_Configuration->addAction(act);
   connect(act, &QAction::triggered, this, &dummyAction);
-  /*connect(&projectManager, &ProjectManager::currentProjectChanged, this,
-          &MainWindow::on_currentProjectChanged);*/
+  connect(&projectManager, &ProjectManager::currentProjectChanged, this,
+          &MainWindow::on_currentProjectChanged);
 }
 
 MainWindow::~MainWindow() { delete ui; }
