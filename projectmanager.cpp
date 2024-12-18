@@ -87,6 +87,9 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
 
   QString name;
   QString language;
+
+  // TODO: accomodate for errors
+
   if (!std::filesystem::exists(p)) {
     // treat it as a blank project
     // should ask the user what language the project is
