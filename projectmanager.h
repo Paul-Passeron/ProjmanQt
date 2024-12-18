@@ -16,13 +16,13 @@ public:
   ProjectManager();
   ~ProjectManager();
   Project *fromLanguage(Language *lang, std::string name,
-                        std::string description,std::filesystem::path p);
+                        std::string description, std::filesystem::path p);
   void createProject(Project *project);
   void deleteProject(std::string name);
   Project *getProject(std::string name);
   Project *getCurrentProject();
   void setCurrentProject(std::string name);
-
+  Project *fromSerialized(const std::filesystem::path &p);
 signals:
   void currentProjectChanged();
 };

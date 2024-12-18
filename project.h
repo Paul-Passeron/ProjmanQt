@@ -34,6 +34,8 @@ public:
   RunConfiguration getLastConfig() const;
   void setLastConfig(RunConfiguration &rc);
   virtual void generateFileStructure() = 0;
+  Language *getLanguage();
+  void serialize();
 };
 
 #endif // PROJECT_H

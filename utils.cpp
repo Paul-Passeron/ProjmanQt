@@ -1,14 +1,14 @@
 #include "utils.h"
+#include "qmessagebox.h"
+#include <QMessageBox>
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
-#include <stdexcept>
 
 BuildSystem *Utils::fromLanguage(std::string name, Language *lang) {
   (void)name;
   (void)lang;
-  std::runtime_error("TODO: BuildSystem *Utils::fromLanguage(std::string name, "
-                     "Language *lang)");
-  // return nullptr;
+  return nullptr;
 }
 
 std::filesystem::path Utils::getHome() {
@@ -45,4 +45,14 @@ std::string Utils::sanitizeProjectName(const std::string &projectName) {
 void Utils::createFile(const std::filesystem::path &p) {
   std::ofstream f(p);
   f.close();
+}
+
+void Utils::initGit(const std::filesystem::path &p) {
+  createFile(p / ".gitignore");
+  std::string command = "git init ";
+  command += p.string();
+  int res = system(command.c_str());
+  if (res != 0) {
+    QMessageBox::critical(nullptr, "Error", "Failed to initialize git");
+  }
 }

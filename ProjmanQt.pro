@@ -23,6 +23,7 @@ SOURCES += \
     newprojectdialog.cpp \
     project.cpp \
     projectmanager.cpp \
+    projectserializer.cpp \
     pythonlanguage.cpp \
     runconfiguration.cpp \
     utils.cpp
@@ -41,6 +42,7 @@ HEADERS += \
     newprojectdialog.h \
     project.h \
     projectmanager.h \
+    projectserializer.h \
     pythonlanguage.h \
     runconfiguration.h \
     utils.h

@@ -5,9 +5,11 @@
 #include "projectmanager.h"
 #include "qmessagebox.h"
 #include "ui_mainwindow.h"
+#include "utils.h"
 #include <QFileSystemModel>
 #include <QLabel>
 #include <QMessageBox>
+#include <fstream>
 #include <iostream>
 
 void dummyAction() {
@@ -49,6 +51,17 @@ void MainWindow::on_actionNew_Project_triggered() {
   proj->generateFileStructure();
   projectManager.createProject(proj);
   projectManager.setCurrentProject(proj->getName());
+  std::filesystem::path full_path = proj->getPath() / proj->getSanitized();
+  if (useGit) {
+    Utils::initGit(full_path);
+  }
+  if (!description.empty()) {
+    std::filesystem::path readme = full_path / "README.md";
+    Utils::createFile(readme);
+    std::ofstream file(readme);
+    file << description;
+    file.close();
+  }
 }
 
 void MainWindow::on_currentProjectChanged() {

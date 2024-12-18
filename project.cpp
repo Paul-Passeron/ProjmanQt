@@ -1,6 +1,8 @@
 #include "project.h"
+#include "projectserializer.h"
 #include "runconfiguration.h"
 #include "utils.h"
+#include <fstream>
 
 Project::Project(std::string name, std::string description,
                  std::filesystem::path p)
@@ -62,6 +64,16 @@ std::string Project::getName() const { return name; }
 
 std::filesystem::path Project::getPath() const { return p; }
 
+Language *Project::getLanguage() { return language; }
+
 std::string Project::getSanitized() {
   return Utils::sanitizeProjectName(getName());
+}
+
+void Project::serialize() {
+  // serialize the project
+  std::ofstream file(p / ".projman");
+  file << "PROJ"; // 4 magic bytes
+  file << ProjectSerializer::serialize(this);
+  file.close();
 }
