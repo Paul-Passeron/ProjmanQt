@@ -6,15 +6,12 @@
 #include "qmessagebox.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
+#include <QFileDialog>
 #include <QFileSystemModel>
 #include <QLabel>
 #include <QMessageBox>
 #include <fstream>
 #include <iostream>
-
-void dummyAction() {
-  QMessageBox::information(nullptr, "Dummy", "This is a dummy action");
-}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -23,9 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
   if (projectManager.getCurrentProject() == nullptr) {
     ui->treeView->setEnabled(false);
   }
-  QAction *act = new QAction("Dummy\n", this);
-  ui->menuRun_Configuration->addAction(act);
-  connect(act, &QAction::triggered, this, &dummyAction);
   connect(&projectManager, &ProjectManager::currentProjectChanged, this,
           &MainWindow::on_currentProjectChanged);
 }
@@ -69,6 +63,7 @@ void MainWindow::on_currentProjectChanged() {
   ui->projectOpenedLabel->setText(QString::fromStdString(p->getName()));
   ui->treeView->setEnabled(true);
   updateTreeView();
+  p->serialize();
 }
 
 void MainWindow::updateTreeView() {
@@ -87,3 +82,17 @@ void MainWindow::updateTreeView() {
 }
 
 void MainWindow::on_actionRun_Last_Configuration_triggered() {}
+
+void MainWindow::on_actionOpen_Project_triggered() {
+  QString dir = QFileDialog::getExistingDirectory(
+      this, "Browse project path...", QDir::homePath(),
+      QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+  std::filesystem::path p = dir.toStdString();
+  Project *project = projectManager.fromSerialized(p);
+  if (project != nullptr) {
+    projectManager.createProject(project);
+    projectManager.setCurrentProject(project->getName());
+  } else {
+    std::cout << "Project not found" << std::endl;
+  }
+}

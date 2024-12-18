@@ -3,12 +3,12 @@
 
 std::string ProjectSerializer::serialize(Project *pro) {
   std::string res = "{";
-  res += "\"name\" = ";
+  res += "\"name\" : ";
   res += "\"" + pro->getName() + "\",";
-  res += "\"language\" = ";
+  res += "\"language\" : ";
   res += "\"" + pro->getLanguage()->getName() + "\"";
   res += ",";
-  res += "\"run_configurations\" = []";
+  res += "\"run_configurations\" : []";
   res += "}";
   return res;
 }

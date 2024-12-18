@@ -72,7 +72,7 @@ std::string Project::getSanitized() {
 
 void Project::serialize() {
   // serialize the project
-  std::ofstream file(p / ".projman");
+  std::ofstream file(p / getSanitized() / ".projman");
   file << "PROJ"; // 4 magic bytes
   file << ProjectSerializer::serialize(this);
   file.close();

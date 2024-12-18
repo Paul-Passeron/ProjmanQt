@@ -27,7 +27,9 @@ private slots:
 
   void on_actionRun_Last_Configuration_triggered();
 
-private:
+  void on_actionOpen_Project_triggered();
+
+  private:
   Ui::MainWindow *ui;
 
   void updateTreeView();
