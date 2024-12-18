@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "projectmanager.h"
+#include <QLabel>
 
 #include <QMainWindow>
 
@@ -24,7 +25,11 @@ private slots:
   void on_actionNew_Project_triggered();
   void on_currentProjectChanged();
 
+  void on_actionRun_Last_Configuration_triggered();
+
 private:
   Ui::MainWindow *ui;
+
+  void updateTreeView();
 };
 #endif // MAINWINDOW_H

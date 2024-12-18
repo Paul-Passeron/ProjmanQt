@@ -1,8 +1,10 @@
 #include "project.h"
 #include "runconfiguration.h"
+#include "utils.h"
 
-Project::Project(std::string name, std::string description)
-    : name(name), description(description) {}
+Project::Project(std::string name, std::string description,
+                 std::filesystem::path p)
+    : name(name), description(description), p(p) {}
 
 void Project::addFile(std::filesystem::path file) {
   // Check if file is was not already added
@@ -59,3 +61,7 @@ BuildSystem *Project::getBuildSystem() const { return buildSystem; }
 std::string Project::getName() const { return name; }
 
 std::filesystem::path Project::getPath() const { return p; }
+
+std::string Project::getSanitized() {
+  return Utils::sanitizeProjectName(getName());
+}

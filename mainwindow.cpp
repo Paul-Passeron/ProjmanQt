@@ -5,8 +5,10 @@
 #include "projectmanager.h"
 #include "qmessagebox.h"
 #include "ui_mainwindow.h"
+#include <QFileSystemModel>
 #include <QLabel>
 #include <QMessageBox>
+#include <iostream>
 
 void dummyAction() {
   QMessageBox::information(nullptr, "Dummy", "This is a dummy action");
@@ -17,10 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   if (projectManager.getCurrentProject() == nullptr) {
-    QLabel *l =
-        new QLabel("Create a new project or open a project to get started...");
     ui->treeView->setEnabled(false);
-    ui->verticalLayout->insertWidget(0, l);
   }
   QAction *act = new QAction("Dummy\n", this);
   ui->menuRun_Configuration->addAction(act);
@@ -45,15 +44,33 @@ void MainWindow::on_actionNew_Project_triggered() {
   bool useGit = dialog->getGit();
   Language *l = LanguageManager::fromName(languageName);
   printf("Language name: %s\n", l->getName().c_str());
-  Project *proj = projectManager.fromLanguage(l, projectName, description);
+  Project *proj =
+      projectManager.fromLanguage(l, projectName, description, projectPath);
+  proj->generateFileStructure();
   projectManager.createProject(proj);
   projectManager.setCurrentProject(proj->getName());
-  //   projectManager.createProject(projectName, description, projectPath,
-  //   useGit);
 }
 
 void MainWindow::on_currentProjectChanged() {
-  QMessageBox msg;
-  msg.setText(QString::fromStdString("Hello,World"));
-  msg.exec();
+  Project *p = projectManager.getCurrentProject();
+  ui->projectOpenedLabel->setText(QString::fromStdString(p->getName()));
+  ui->treeView->setEnabled(true);
+  updateTreeView();
 }
+
+void MainWindow::updateTreeView() {
+
+  QFileSystemModel *model = new QFileSystemModel;
+  Project *project = projectManager.getCurrentProject();
+  if (project == nullptr) {
+    return;
+  }
+  std::filesystem::path projectPath = project->getPath();
+  std::cout << "PATH: " << projectPath << std::endl;
+  model->setRootPath("/");
+  ui->treeView->setModel(model);
+  ui->treeView->setRootIndex(
+      model->index(QDir(projectPath / project->getSanitized()).absolutePath()));
+}
+
+void MainWindow::on_actionRun_Last_Configuration_triggered() {}

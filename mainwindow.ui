@@ -21,6 +21,13 @@
        <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
       </property>
       <item>
+       <widget class="QLabel" name="projectOpenedLabel">
+        <property name="text">
+         <string>Create a new project or open a project to get started...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QTreeView" name="treeView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -54,7 +61,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -72,8 +79,6 @@
     </property>
     <addaction name="actionBuild"/>
     <addaction name="actionRun"/>
-    <addaction name="actionForce_Build"/>
-    <addaction name="actionForce_Run"/>
     <addaction name="actionClean"/>
     <addaction name="actionInstall"/>
    </widget>
@@ -82,6 +87,7 @@
      <string>Run Configuration</string>
     </property>
     <addaction name="actionNew_Configuration"/>
+    <addaction name="actionRun_Last_Configuration"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuProject"/>
@@ -105,6 +111,9 @@
    <addaction name="actionRun"/>
    <addaction name="actionClean"/>
    <addaction name="actionInstall"/>
+   <addaction name="separator"/>
+   <addaction name="actionNew_Configuration"/>
+   <addaction name="actionRun_Last_Configuration"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
   </widget>
@@ -137,7 +146,7 @@
   </action>
   <action name="actionBuild">
    <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::ViewRefresh"/>
+    <iconset theme="preferences-system"/>
    </property>
    <property name="text">
     <string>Build</string>
@@ -154,16 +163,6 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionForce_Build">
-   <property name="text">
-    <string>Force Build</string>
-   </property>
-  </action>
-  <action name="actionForce_Run">
-   <property name="text">
-    <string>Force Run</string>
-   </property>
-  </action>
   <action name="actionClean">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditClear"/>
@@ -174,15 +173,26 @@
   </action>
   <action name="actionInstall">
    <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::SecurityHigh"/>
+    <iconset theme="QIcon::ThemeIcon::DialogPassword"/>
    </property>
    <property name="text">
     <string>Install</string>
    </property>
   </action>
   <action name="actionNew_Configuration">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
    <property name="text">
     <string>New Configuration</string>
+   </property>
+  </action>
+  <action name="actionRun_Last_Configuration">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentOpenRecent"/>
+   </property>
+   <property name="text">
+    <string>Run Last Configuration</string>
    </property>
   </action>
  </widget>

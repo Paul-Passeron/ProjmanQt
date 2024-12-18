@@ -29,10 +29,11 @@ void ProjectManager::setCurrentProject(std::string name) {
 }
 
 Project *ProjectManager::fromLanguage(Language *lang, std::string name,
-                                      std::string description) {
+                                      std::string description,
+                                      std::filesystem::path p) {
   std::cout << typeid(*lang).name() << std::endl;
   if (lang->getName() == "C++") {
-    return new CppProject(name, description);
+    return new CppProject(name, description, p);
   } else {
     QMessageBox::critical(nullptr, "Error", "Failed to find lang");
   }
