@@ -56,3 +56,17 @@ void Utils::initGit(const std::filesystem::path &p) {
     QMessageBox::critical(nullptr, "Error", "Failed to initialize git");
   }
 }
+
+std::string Utils::exec(const char *cmd, int *code) {
+  char buff[512] = {0};
+  std::string result;
+  auto pipe = popen(cmd, "r");
+  if (!pipe) {
+    throw std::runtime_error("popen() failed!");
+  }
+  while (fgets(buff, sizeof(buff), pipe) != nullptr) {
+    result += buff;
+  }
+  *code = WEXITSTATUS(pclose(pipe));
+  return result;
+}

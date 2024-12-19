@@ -1,7 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "projectinfos.h"
 #include "projectmanager.h"
+#include "qfilesystemmodel.h"
+#include "qsortfilterproxymodel.h"
 #include <QLabel>
 
 #include <QMainWindow>
@@ -22,16 +25,24 @@ public:
 
 private slots:
   void on_actionExit_triggered();
+
   void on_actionNew_Project_triggered();
+
   void on_currentProjectChanged();
 
   void on_actionRun_Last_Configuration_triggered();
 
   void on_actionOpen_Project_triggered();
 
-  private:
-  Ui::MainWindow *ui;
+  void on_actionNew_Configuration_triggered();
 
+  void filterFiles(const QString &text);
+
+private:
+  Ui::MainWindow *ui;
+  ProjectInfos *infos = nullptr;
+  QFileSystemModel *fileSystemModel;
+  QSortFilterProxyModel *proxyModel;
   void updateTreeView();
 };
 #endif // MAINWINDOW_H

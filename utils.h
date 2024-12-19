@@ -14,6 +14,7 @@ public:
   static std::string sanitizeProjectName(const std::string &projectName);
   static void createFile(const std::filesystem::path &p);
   static void initGit(const std::filesystem::path &p);
+  static std::string exec(const char *cmd, int *code);
 };
 
 #endif // UTILS_H

@@ -2,15 +2,20 @@
 #include "language.h"
 #include "languagemanager.h"
 #include "newprojectdialog.h"
+#include "newrunconfigurationdialog.h"
 #include "projectinfos.h"
 #include "projectmanager.h"
 #include "qmessagebox.h"
+#include "qnamespace.h"
+#include "runconfiguration.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
 #include <QFileDialog>
 #include <QFileSystemModel>
 #include <QLabel>
 #include <QMessageBox>
+#include <QRegularExpression>
+#include <QSortFilterProxyModel>
 #include <filesystem>
 #include <fstream>
 
@@ -23,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
   connect(&projectManager, &ProjectManager::currentProjectChanged, this,
           &MainWindow::on_currentProjectChanged);
+  ui->searchBar->setVisible(false);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -60,27 +66,41 @@ void MainWindow::on_actionNew_Project_triggered() {
 }
 
 void MainWindow::on_currentProjectChanged() {
+
   Project *p = projectManager.getCurrentProject();
+  ui->searchBar->setVisible(true);
   ui->projectOpenedLabel->setText(QString::fromStdString(p->getName()));
   ui->treeView->setEnabled(true);
   updateTreeView();
   p->serialize();
-  ProjectInfos *proj = new ProjectInfos(p);
-  ui->horizontalLayout->addWidget(proj);
+  if (infos != nullptr) {
+    infos->update(p);
+  } else {
+    infos = new ProjectInfos(p);
+    ui->horizontalLayout->addWidget(infos);
+  }
 }
 
 void MainWindow::updateTreeView() {
-
-  QFileSystemModel *model = new QFileSystemModel;
   Project *project = projectManager.getCurrentProject();
   if (project == nullptr) {
     return;
   }
   std::filesystem::path projectPath = project->getPath();
-  model->setRootPath("/");
-  ui->treeView->setModel(model);
-  ui->treeView->setRootIndex(
-      model->index(QDir(projectPath / project->getSanitized()).absolutePath()));
+
+  fileSystemModel = new QFileSystemModel;
+  proxyModel = new QSortFilterProxyModel(this);
+  fileSystemModel->setRootPath("/");
+  proxyModel->setSourceModel(fileSystemModel);
+  proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  proxyModel->setRecursiveFilteringEnabled(true);
+  connect(ui->searchBar, &QLineEdit::textChanged, this,
+          &MainWindow::filterFiles);
+
+  ui->treeView->setModel(proxyModel);
+  auto index = fileSystemModel->index(
+      QDir(projectPath / project->getSanitized()).absolutePath());
+  ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
 }
 
 void MainWindow::on_actionRun_Last_Configuration_triggered() {}
@@ -97,4 +117,33 @@ void MainWindow::on_actionOpen_Project_triggered() {
       projectManager.setCurrentProject(project->getName());
     }
   }
+}
+
+void MainWindow::on_actionNew_Configuration_triggered() {
+  auto diag = new NewRunConfigurationDialog();
+  if (diag->exec() != QDialog::Accepted) {
+    RunConfiguration config = diag->getConfig();
+    Project *p = projectManager.getCurrentProject();
+    if (p == nullptr) {
+      return;
+    }
+    p->addRunConfiguration(config);
+  }
+}
+
+void MainWindow::filterFiles(const QString &text) {
+  // Set the filter regular expression
+
+  proxyModel->setFilterRegularExpression(
+      QRegularExpression(text, QRegularExpression::CaseInsensitiveOption));
+
+  Project *project = projectManager.getCurrentProject();
+  if (project == nullptr) {
+    return;
+  }
+  std::filesystem::path projectPath = project->getPath();
+
+  auto index = fileSystemModel->index(
+      QDir(projectPath / project->getSanitized()).absolutePath());
+  ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
 }

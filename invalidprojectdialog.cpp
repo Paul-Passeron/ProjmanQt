@@ -10,6 +10,7 @@ InvalidProjectDialog::InvalidProjectDialog(QWidget *parent)
   for (const auto &lang : languages) {
     ui->comboBox->addItem(QString::fromStdString(lang->getName()));
   }
+  setWindowTitle("Unrecognized Project");
 }
 
 Language *InvalidProjectDialog::getLang() {

@@ -19,6 +19,8 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
   for (const auto &lang : languages) {
     ui->language->addItem(QString::fromStdString(lang->getName()));
   }
+
+  setWindowTitle("New Project");
 }
 
 NewProjectDialog::~NewProjectDialog() { delete ui; }

@@ -28,6 +28,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QLineEdit" name="searchBar">
+        <property name="placeholderText">
+         <string>Search...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QTreeView" name="treeView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

@@ -76,9 +76,9 @@ void Project::serialize() {
   file << "PROJ"; // 4 magic bytes
   file << ProjectSerializer::serialize(this);
   file.close();
+  std::ofstream readme(p / getSanitized() / "README.md");
+  readme << description;
+  readme.close();
 }
 
-std::string Project::getDescription() const
-{
-    return description;
-}
+std::string Project::getDescription() const { return description; }

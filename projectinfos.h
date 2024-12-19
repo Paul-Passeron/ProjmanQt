@@ -15,12 +15,13 @@ class ProjectInfos : public QWidget {
 
 public:
   explicit ProjectInfos(Project *p, QWidget *parent = nullptr);
+  void update(Project *p);
   ~ProjectInfos();
 
-  private slots:
+private slots:
   void on_pushButton_clicked();
 
-  private:
+private:
   Ui::ProjectInfos *ui;
 };
 

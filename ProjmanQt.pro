@@ -22,11 +22,13 @@ SOURCES += \
     mainwindow.cpp \
     makefilebuildsystem.cpp \
     newprojectdialog.cpp \
+    newrunconfigurationdialog.cpp \
     project.cpp \
     projectinfos.cpp \
     projectmanager.cpp \
     projectserializer.cpp \
     pythonlanguage.cpp \
+    runargsdialog.cpp \
     runconfiguration.cpp \
     utils.cpp
 
@@ -43,11 +45,13 @@ HEADERS += \
     mainwindow.h \
     makefilebuildsystem.h \
     newprojectdialog.h \
+    newrunconfigurationdialog.h \
     project.h \
     projectinfos.h \
     projectmanager.h \
     projectserializer.h \
     pythonlanguage.h \
+    runargsdialog.h \
     runconfiguration.h \
     utils.h
 
@@ -55,7 +59,9 @@ FORMS += \
     invalidprojectdialog.ui \
     mainwindow.ui \
     newprojectdialog.ui \
-    projectinfos.ui
+    newrunconfigurationdialog.ui \
+    projectinfos.ui \
+    runargsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
