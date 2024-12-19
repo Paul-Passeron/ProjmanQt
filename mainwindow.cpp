@@ -79,6 +79,8 @@ void MainWindow::on_currentProjectChanged() {
     infos = new ProjectInfos(p);
     ui->horizontalLayout->addWidget(infos);
   }
+  connect(p, &Project::runConfigurationsChanged, this,
+          &MainWindow::on_RunConfigurationsChanged);
 }
 
 void MainWindow::updateTreeView() {
@@ -122,13 +124,14 @@ void MainWindow::on_actionOpen_Project_triggered() {
 void MainWindow::on_actionNew_Configuration_triggered() {
   auto diag = new NewRunConfigurationDialog();
   if (diag->exec() != QDialog::Accepted) {
-    RunConfiguration config = diag->getConfig();
-    Project *p = projectManager.getCurrentProject();
-    if (p == nullptr) {
-      return;
-    }
-    p->addRunConfiguration(config);
+    return;
   }
+  RunConfiguration config = diag->getConfig();
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    return;
+  }
+  p->addRunConfiguration(config);
 }
 
 void MainWindow::filterFiles(const QString &text) {
@@ -146,4 +149,29 @@ void MainWindow::filterFiles(const QString &text) {
   auto index = fileSystemModel->index(
       QDir(projectPath / project->getSanitized()).absolutePath());
   ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
+}
+
+void MainWindow::addRunConfiguration(RunConfiguration &rc) {
+  QAction *runThisConfig = new QAction(QString::fromStdString(rc.getName()),
+                                       ui->menuRun_Configuration);
+  ui->menuRun_Configuration->addAction(runThisConfig);
+  connect(runThisConfig, &QAction::triggered, &rc, &RunConfiguration::execute);
+}
+
+void MainWindow::on_RunConfigurationsChanged() {
+  int i = 0;
+  for (auto action : ui->menuRun_Configuration->actions()) {
+    i++;
+    if (i > 2) {
+      ui->menuRun_Configuration->removeAction(action);
+    }
+  }
+  Project *project = projectManager.getCurrentProject();
+  if (project == nullptr) {
+    return;
+  }
+  std::vector<RunConfiguration> &configs = project->getConfigs();
+  for (auto &config : configs) {
+    addRunConfiguration(config);
+  }
 }

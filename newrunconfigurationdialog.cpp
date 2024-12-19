@@ -13,4 +13,5 @@ RunConfiguration NewRunConfigurationDialog::getConfig() {
   RunConfiguration config(ui->lineEdit->text().toStdString(),
                           ui->lineEdit_2->text().toStdString(),
                           ui->checkBox->isChecked());
+    return config;
 }

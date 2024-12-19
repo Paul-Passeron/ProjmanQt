@@ -2,7 +2,7 @@
 #define PROJECTMANAGER_H
 
 #include "project.h"
-#include "qobject.h"
+#include <QObject>
 #include <string>
 #include <vector>
 

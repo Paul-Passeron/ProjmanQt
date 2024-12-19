@@ -5,6 +5,7 @@
 #include "projectmanager.h"
 #include "qfilesystemmodel.h"
 #include "qsortfilterproxymodel.h"
+#include "runconfiguration.h"
 #include <QLabel>
 
 #include <QMainWindow>
@@ -38,11 +39,14 @@ private slots:
 
   void filterFiles(const QString &text);
 
+  void on_RunConfigurationsChanged();
+
 private:
   Ui::MainWindow *ui;
   ProjectInfos *infos = nullptr;
   QFileSystemModel *fileSystemModel;
   QSortFilterProxyModel *proxyModel;
   void updateTreeView();
+  void addRunConfiguration(RunConfiguration &rc);
 };
 #endif // MAINWINDOW_H

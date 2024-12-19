@@ -25,3 +25,14 @@ void RunConfiguration::execute() {
                               QString::fromStdString(std::to_string(code)));
   }
 }
+
+RunConfiguration::RunConfiguration(const RunConfiguration &rc) {
+  name = rc.name;
+  command = rc.command;
+  needs_args = rc.needs_args;
+}
+
+bool RunConfiguration::operator=(const RunConfiguration &other) {
+  return (name = other.name, command = other.command,
+          needs_args = other.needs_args);
+}

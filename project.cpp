@@ -40,6 +40,7 @@ void Project::addRunConfiguration(RunConfiguration config) {
       return;
   }
   runConfigurations.emplace_back(config);
+  emit runConfigurationsChanged();
 }
 
 void Project::removeRunConfiguration(RunConfiguration config) {
@@ -52,7 +53,7 @@ void Project::removeRunConfiguration(RunConfiguration config) {
     // We are done because there must be only one (or zero) config with a
     // singular name in this vector.
     runConfigurations.erase(c_it);
-    return;
+    emit runConfigurationsChanged();
   }
 }
 
@@ -71,6 +72,7 @@ std::string Project::getSanitized() {
 }
 
 void Project::serialize() {
+  is_dirty = false;
   // serialize the project
   std::ofstream file(p / getSanitized() / ".projman");
   file << "PROJ"; // 4 magic bytes
@@ -82,3 +84,12 @@ void Project::serialize() {
 }
 
 std::string Project::getDescription() const { return description; }
+
+std::vector<RunConfiguration> &Project::getConfigs() {
+  return runConfigurations;
+}
+
+void Project::setDescription(std::string description) {
+  is_dirty = true;
+  this->description = description;
+}
