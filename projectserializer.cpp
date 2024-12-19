@@ -1,5 +1,6 @@
 #include "projectserializer.h"
 #include "project.h"
+#include <iostream>
 #include <string>
 
 std::string ProjectSerializer::serialize(Project *pro) {
@@ -17,6 +18,7 @@ std::string ProjectSerializer::serialize(Project *pro) {
       res += ",";
     }
     start = false;
+    std::cout << "WROTE CONFIG" << std::endl;
     res += "{\"name\":\"" + conf.getName() + "\",\"command\":\"" +
            conf.getCommand() + "\", \"needs_args\": \"" +
            (conf.getNeedsArgs() ? "true" : "false") + "\"}";

@@ -9,8 +9,10 @@
 #include "qmessagebox.h"
 #include "qobject.h"
 #include "qobjectdefs.h"
+#include "runconfiguration.h"
 #include "utils.h"
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
@@ -100,6 +102,7 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
 
   QString name;
   QString language;
+  std::vector<RunConfiguration> configs;
 
   bool good = true;
 
@@ -164,6 +167,20 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
     if (json.contains("language")) {
       language = json["language"].toString();
     }
+    if (json.contains("run_configurations")) {
+      QJsonArray runConfigs = json["run_configurations"].toArray();
+      for (auto const &config : runConfigs) {
+        QJsonObject configObj = config.toObject();
+        QString config_name = configObj["name"].toString();
+        QString config_command = configObj["command"].toString();
+        QString config_needs_args = configObj["needs_args"].toString();
+        bool needs_args = config_needs_args == "true";
+        RunConfiguration rc(config_name.toStdString(),
+                            config_command.toStdString(), needs_args);
+        configs.emplace_back(rc);
+        std::cout << "added config !!!\n";
+      }
+    }
   }
   Language *lang = LanguageManager::fromName(language.toStdString());
   if (lang == nullptr) {
@@ -184,6 +201,10 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
     return nullptr;
   }
   // TODO: build system + run configurations
-  return ProjectManager::fromLanguage(lang, name.toStdString(), description,
-                                      p.parent_path());
+  Project *res = ProjectManager::fromLanguage(lang, name.toStdString(),
+                                              description, p.parent_path());
+  for (const auto &conf : configs) {
+    res->addRunConfiguration(conf);
+  }
+  return res;
 }

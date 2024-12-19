@@ -10,7 +10,7 @@ RunConfiguration::RunConfiguration(std::string name, std::string command,
 
 std::string RunConfiguration::getName() const { return name; }
 
-void RunConfiguration::execute() {
+void RunConfiguration::execute() const {
   if (needs_args) {
     auto diag = new RunArgsDialog();
     if (diag->exec() != QDialog::Accepted) {
@@ -43,3 +43,8 @@ bool RunConfiguration::operator==(const RunConfiguration &other) const {
 }
 
 std::string RunConfiguration::getCommand() const { return command; }
+
+bool RunConfiguration::getNeedsArgs() const
+{
+    return needs_args;
+}

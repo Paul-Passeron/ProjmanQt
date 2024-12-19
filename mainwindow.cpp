@@ -81,6 +81,7 @@ void MainWindow::on_currentProjectChanged() {
   }
   connect(p, &Project::runConfigurationsChanged, this,
           &MainWindow::on_RunConfigurationsChanged);
+  on_RunConfigurationsChanged();
 }
 
 void MainWindow::updateTreeView() {
