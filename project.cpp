@@ -3,31 +3,11 @@
 #include "runconfiguration.h"
 #include "utils.h"
 #include <fstream>
+#include <iostream>
 
 Project::Project(std::string name, std::string description,
                  std::filesystem::path p)
-    : name(name), description(description), p(p) {}
-
-void Project::addFile(std::filesystem::path file) {
-  // Check if file is was not already added
-  const auto p2 = std::filesystem::path(file);
-  for (const auto &f : files) {
-    const auto p1 = std::filesystem::absolute(f);
-    if (p1 == p2)
-      return;
-  }
-  files.emplace_back(file);
-}
-void Project::removeFile(std::filesystem::path file) {
-  const auto p2 = std::filesystem::path(file);
-  for (auto file_it = files.cbegin(); file_it != files.cend(); ++file_it) {
-    const auto p1 = std::filesystem::absolute(*file_it);
-    if (p1 != p2)
-      continue;
-    files.erase(file_it);
-    return;
-  }
-}
+    : name(name), description(description), p(p), last_config(-1) {}
 
 // If you want to overwrite a run config the right way is to remove the old
 // one before ypu add the new one.
@@ -56,8 +36,6 @@ void Project::removeRunConfiguration(RunConfiguration config) {
     emit runConfigurationsChanged();
   }
 }
-
-std::vector<std::filesystem::path> Project::getFiles() const { return files; }
 
 BuildSystem *Project::getBuildSystem() const { return buildSystem; }
 
@@ -93,3 +71,17 @@ void Project::setDescription(std::string description) {
   is_dirty = true;
   this->description = description;
 }
+
+void Project::setLastConfig(const RunConfiguration &rc) {
+  int i = 0;
+  for (const auto &conf : runConfigurations) {
+    if (conf == rc) {
+      last_config = i;
+      break;
+    }
+    i++;
+  }
+  std::cout << "Set last config at " << last_config << std::endl;
+}
+
+int Project::getLastConfig() const { return last_config; }

@@ -30,11 +30,11 @@ void MakefileBuildSystem::generate(Project *project,
     delete[] buffer;
   }
   makefile << "OBJ=";
-  for (const auto &f : project->getFiles()) {
-    if (f.extension() == ".c") {
-      makefile << "$(BUILD)" << f.stem().string() << ".o ";
-    }
-  }
+  // for (const auto &f : project->getFiles()) {
+  //   if (f.extension() == ".c") {
+  //     makefile << "$(BUILD)" << f.stem().string() << ".o ";
+  //   }
+  // }
   makefile << "\n";
   makefile.close();
 }

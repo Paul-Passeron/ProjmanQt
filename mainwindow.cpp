@@ -105,7 +105,22 @@ void MainWindow::updateTreeView() {
   ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
 }
 
-void MainWindow::on_actionRun_Last_Configuration_triggered() {}
+void MainWindow::on_actionRun_Last_Configuration_triggered() {
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    QMessageBox::critical(
+        this, "No Project Opened",
+        "Please open or create a project before creating a run configuration.");
+    return;
+  }
+  int rc = p->getLastConfig();
+  if (rc < 0) {
+    QMessageBox::critical(this, "No Last Configuration",
+                          "Could not find last configuration");
+    return;
+  }
+  ui->menuRun_Configuration->actions()[rc + 2]->trigger();
+}
 
 void MainWindow::on_actionOpen_Project_triggered() {
   QString dir = QFileDialog::getExistingDirectory(
@@ -122,15 +137,19 @@ void MainWindow::on_actionOpen_Project_triggered() {
 }
 
 void MainWindow::on_actionNew_Configuration_triggered() {
+
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    QMessageBox::critical(
+        this, "No Project Opened",
+        "Please open or create a project before creating a run configuration.");
+    return;
+  }
   auto diag = new NewRunConfigurationDialog();
   if (diag->exec() != QDialog::Accepted) {
     return;
   }
   RunConfiguration config = diag->getConfig();
-  Project *p = projectManager.getCurrentProject();
-  if (p == nullptr) {
-    return;
-  }
   p->addRunConfiguration(config);
 }
 
@@ -156,6 +175,12 @@ void MainWindow::addRunConfiguration(RunConfiguration &rc) {
                                        ui->menuRun_Configuration);
   ui->menuRun_Configuration->addAction(runThisConfig);
   connect(runThisConfig, &QAction::triggered, &rc, &RunConfiguration::execute);
+  connect(runThisConfig, &QAction::triggered, this, [&]() {
+    Project *p = projectManager.getCurrentProject();
+    if (p != nullptr) {
+      p->setLastConfig(rc); // Set the last run configuration
+    }
+  });
 }
 
 void MainWindow::on_RunConfigurationsChanged() {

@@ -1,7 +1,7 @@
 #include "projectinfos.h"
 #include "project.h"
 #include "ui_projectinfos.h"
-#include <iostream>
+
 ProjectInfos::ProjectInfos(Project *p, QWidget *parent)
     : QWidget(parent), p(p), ui(new Ui::ProjectInfos) {
   ui->setupUi(this);
@@ -12,9 +12,7 @@ ProjectInfos::~ProjectInfos() { delete ui; }
 
 void ProjectInfos::on_pushButton_clicked() {
   // Save
-
   p->serialize();
-  std::cout << "SAVING" << std::endl;
 }
 
 void ProjectInfos::update(Project *p) {
@@ -24,6 +22,7 @@ void ProjectInfos::update(Project *p) {
       QString::fromStdString((p->getPath() / p->getSanitized()).string()));
   ui->desc->setText(QString::fromStdString(p->getDescription()));
 }
+
 void ProjectInfos::on_desc_textChanged()
 {
     p->setDescription(ui->desc->toPlainText().toStdString());
