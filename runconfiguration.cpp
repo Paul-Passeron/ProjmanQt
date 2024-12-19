@@ -41,3 +41,5 @@ bool RunConfiguration::operator==(const RunConfiguration &other) const {
   return name == other.name && command == other.command &&
          needs_args == other.needs_args;
 }
+
+std::string RunConfiguration::getCommand() const { return command; }

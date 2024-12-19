@@ -73,7 +73,6 @@
     <addaction name="actionBuild"/>
     <addaction name="actionRun"/>
     <addaction name="actionClean"/>
-    <addaction name="actionInstall"/>
    </widget>
    <widget class="QMenu" name="menuRun_Configuration">
     <property name="title">
@@ -103,7 +102,6 @@
    <addaction name="actionBuild"/>
    <addaction name="actionRun"/>
    <addaction name="actionClean"/>
-   <addaction name="actionInstall"/>
    <addaction name="separator"/>
    <addaction name="actionNew_Configuration"/>
    <addaction name="actionRun_Last_Configuration"/>
@@ -162,14 +160,6 @@
    </property>
    <property name="text">
     <string>Clean</string>
-   </property>
-  </action>
-  <action name="actionInstall">
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::DialogPassword"/>
-   </property>
-   <property name="text">
-    <string>Install</string>
    </property>
   </action>
   <action name="actionNew_Configuration">

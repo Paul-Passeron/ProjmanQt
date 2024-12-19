@@ -7,7 +7,6 @@
 #include "runconfiguration.h"
 #include <QObject>
 #include <filesystem>
-#include <optional>
 #include <string>
 
 #include <vector>

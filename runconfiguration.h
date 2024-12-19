@@ -17,9 +17,10 @@ public:
   bool operator==(const RunConfiguration &other) const;
   RunConfiguration(const RunConfiguration &rc);
   std::string getName() const;
-  bool getNeedsArgs();
+  std::string getCommand() const;
+  bool getNeedsArgs() const;
 public slots:
-  void execute();
+  void execute() const;
 signals:
   void started(RunConfiguration rc);
 };
