@@ -1,11 +1,15 @@
 #include "projectmanager.h"
 #include "cppproject.h"
+#include "invalidprojectdialog.h"
+#include "language.h"
 #include "languagemanager.h"
 #include "qimage.h"
 #include "qjsondocument.h"
 #include "qjsonvalue.h"
+#include "qmessagebox.h"
 #include "qobject.h"
 #include "qobjectdefs.h"
+#include "utils.h"
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -73,6 +77,15 @@ Project *ProjectManager::getProject(std::string name) {
   return nullptr;
 }
 
+Language *askLang() {
+  InvalidProjectDialog *diag = new InvalidProjectDialog();
+  if (diag->exec() != QDialog::Accepted) {
+    // The user stopped oppening the project
+    return nullptr;
+  }
+  return diag->getLang();
+}
+
 Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
   std::filesystem::path serialized = p / ".projman";
   std::filesystem::path readme = p / "README.md";
@@ -88,14 +101,19 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
   QString name;
   QString language;
 
-  // TODO: accomodate for errors
+  bool good = true;
 
-  if (!std::filesystem::exists(p)) {
+  // TODO: accomodate for errors
+  if (!std::filesystem::exists(serialized)) {
     // treat it as a blank project
     // should ask the user what language the project is
-    std::cout << "no .projman found 1" << std::endl;
-    return nullptr;
-
+    Language *lang = askLang();
+    if (lang == nullptr) {
+      return nullptr;
+    }
+    name = QString::fromStdString(p.filename());
+    good = false;
+    language = QString::fromStdString(lang->getName());
   } else {
 
     QFile f = QFile(serialized);
@@ -103,13 +121,25 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
       // could not read .projman file !
       std::cout << "no .projman found 2" << std::endl;
 
-      return nullptr;
+      Language *lang = askLang();
+      if (lang == nullptr) {
+        return nullptr;
+      }
+      language = QString::fromStdString(lang->getName());
+      name = QString::fromStdString(p.filename());
+      good = false;
     }
     QString jsonData = f.readAll();
     f.close();
     if (!jsonData.startsWith("PROJ")) {
       // not a valid .projman file
-      std::cout << "not a valid .projman" << std::endl;
+      Language *lang = askLang();
+      if (lang == nullptr) {
+        return nullptr;
+      }
+      language = QString::fromStdString(lang->getName());
+      name = QString::fromStdString(p.filename());
+      good = false;
     }
 
     jsonData.erase(jsonData.begin(), jsonData.begin() + 4);
@@ -118,9 +148,13 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData.toUtf8(), &error);
     if (jsonDoc.isNull() || error.error != QJsonParseError::NoError) {
       // could not parse .projman file
-      std::cout << "json error" << std::endl;
-      std::cout << error.errorString().toStdString() << std::endl;
-      return nullptr;
+      Language *lang = askLang();
+      if (lang == nullptr) {
+        return nullptr;
+      }
+      name = QString::fromStdString(p.filename());
+      good = false;
+      language = QString::fromStdString(lang->getName());
     }
     QJsonObject json = jsonDoc.object();
 
@@ -134,7 +168,19 @@ Project *ProjectManager::fromSerialized(const std::filesystem::path &p) {
   Language *lang = LanguageManager::fromName(language.toStdString());
   if (lang == nullptr) {
     // could not find language
-    std::cout << "could not find language" << std::endl;
+    Language *lang = askLang();
+    if (lang == nullptr) {
+      return nullptr;
+    }
+    name = QString::fromStdString(p.filename());
+    good = false;
+    language = QString::fromStdString(lang->getName());
+  }
+  std::string n = name.toStdString();
+  if (!good && n != Utils::sanitizeProjectName(n)) {
+    QMessageBox::critical(
+        nullptr, "Could not load project",
+        "This directory name contains one or more illegal characters...");
     return nullptr;
   }
   // TODO: build system + run configurations

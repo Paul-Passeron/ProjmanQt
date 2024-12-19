@@ -77,3 +77,8 @@ void Project::serialize() {
   file << ProjectSerializer::serialize(this);
   file.close();
 }
+
+std::string Project::getDescription() const
+{
+    return description;
+}

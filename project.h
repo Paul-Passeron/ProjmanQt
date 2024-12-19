@@ -36,6 +36,7 @@ public:
   virtual void generateFileStructure() = 0;
   Language *getLanguage();
   void serialize();
+  std::string getDescription() const;
 };
 
 #endif // PROJECT_H

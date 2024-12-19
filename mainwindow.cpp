@@ -2,6 +2,7 @@
 #include "language.h"
 #include "languagemanager.h"
 #include "newprojectdialog.h"
+#include "projectinfos.h"
 #include "projectmanager.h"
 #include "qmessagebox.h"
 #include "ui_mainwindow.h"
@@ -10,8 +11,8 @@
 #include <QFileSystemModel>
 #include <QLabel>
 #include <QMessageBox>
+#include <filesystem>
 #include <fstream>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -64,6 +65,8 @@ void MainWindow::on_currentProjectChanged() {
   ui->treeView->setEnabled(true);
   updateTreeView();
   p->serialize();
+  ProjectInfos *proj = new ProjectInfos(p);
+  ui->horizontalLayout->addWidget(proj);
 }
 
 void MainWindow::updateTreeView() {
@@ -74,7 +77,6 @@ void MainWindow::updateTreeView() {
     return;
   }
   std::filesystem::path projectPath = project->getPath();
-  std::cout << "PATH: " << projectPath << std::endl;
   model->setRootPath("/");
   ui->treeView->setModel(model);
   ui->treeView->setRootIndex(
@@ -88,11 +90,11 @@ void MainWindow::on_actionOpen_Project_triggered() {
       this, "Browse project path...", QDir::homePath(),
       QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
   std::filesystem::path p = dir.toStdString();
-  Project *project = projectManager.fromSerialized(p);
-  if (project != nullptr) {
-    projectManager.createProject(project);
-    projectManager.setCurrentProject(project->getName());
-  } else {
-    std::cout << "Project not found" << std::endl;
+  if (!dir.isEmpty() && std::filesystem::exists(p)) {
+    Project *project = projectManager.fromSerialized(p);
+    if (project != nullptr) {
+      projectManager.createProject(project);
+      projectManager.setCurrentProject(project->getName());
+    }
   }
 }
