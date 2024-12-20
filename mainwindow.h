@@ -47,7 +47,15 @@ private slots:
 
   void onTreeViewDoubleClicked(const QModelIndex &index);
 
-private:
+  void on_actionAbout_ProjmanQt_triggered();
+
+  void on_actionBuild_triggered();
+
+  void on_actionRun_triggered();
+
+  void on_actionClean_triggered();
+
+  private:
   Ui::MainWindow *ui;
 
   ProjectInfos *infos = nullptr;

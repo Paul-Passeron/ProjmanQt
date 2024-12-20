@@ -11,14 +11,16 @@ RunConfiguration::RunConfiguration(std::string name, std::string command,
 std::string RunConfiguration::getName() const { return name; }
 
 void RunConfiguration::execute() const {
+  std::string tmp_command = command;
   if (needs_args) {
     auto diag = new RunArgsDialog();
     if (diag->exec() != QDialog::Accepted) {
       return;
     }
+    tmp_command += diag->getArgs();
   }
   int code;
-  Utils::exec(command.c_str(), &code);
+  Utils::exec(tmp_command.c_str(), &code);
   if (code != 0) {
     QMessageBox::critical(nullptr, QString("Error"),
                           "Command failed with code " +

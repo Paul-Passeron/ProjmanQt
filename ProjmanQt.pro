@@ -28,6 +28,7 @@ SOURCES += \
     projectmanager.cpp \
     projectserializer.cpp \
     pythonlanguage.cpp \
+    pythonproject.cpp \
     runargsdialog.cpp \
     runconfiguration.cpp \
     utils.cpp
@@ -51,6 +52,7 @@ HEADERS += \
     projectmanager.h \
     projectserializer.h \
     pythonlanguage.h \
+    pythonproject.h \
     runargsdialog.h \
     runconfiguration.h \
     utils.h

@@ -15,6 +15,7 @@ public:
     explicit RunArgsDialog(QWidget *parent = nullptr);
     ~RunArgsDialog();
 
+std::string getArgs() const;
 private:
     Ui::RunArgsDialog *ui;
 };

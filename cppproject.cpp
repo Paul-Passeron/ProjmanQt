@@ -1,6 +1,7 @@
 #include "cppproject.h"
 #include "cpplanguage.h"
 #include "utils.h"
+#include "makefilebuildsystem.h"
 #include <filesystem>
 #include <fstream>
 
@@ -8,6 +9,7 @@ CppProject::CppProject(std::string name, std::string description,
                        std::filesystem::path p)
     : Project(name, description, p) {
   this->language = new CppLanguage();
+    this->buildSystem = new MakefileBuildSystem();
 }
 
 void generateSampleMainFile(const std::filesystem::path &p) {

@@ -1,9 +1,12 @@
 #include "utils.h"
+#include <QDirIterator>
 #include "qmessagebox.h"
+#include <QDir>
 #include <QMessageBox>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 BuildSystem *Utils::fromLanguage(std::string name, Language *lang) {
   (void)name;
@@ -69,4 +72,26 @@ std::string Utils::exec(const char *cmd, int *code) {
   }
   *code = WEXITSTATUS(pclose(pipe));
   return result;
+}
+
+QStringList scanDir(QDir dir){
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot| QDir::NoSymLinks);
+    QStringList fileList = dir.entryList();
+    dir.setFilter(QDir::AllDirs| QDir::NoDotAndDotDot| QDir::NoSymLinks);
+    QStringList dirList = dir.entryList();
+    for(QString d: dirList){
+        QStringList new_files = scanDir(d);
+        fileList += new_files;
+    }
+    return fileList;
+}
+
+std::vector<std::filesystem::path> Utils::getFiles(const std::filesystem::path &p)
+{
+    std::vector<std::filesystem::path> res;
+    QStringList files = scanDir(p);
+    for(const QString &s: files){
+        res.emplace_back(s.toStdString());
+    }
+    return res;
 }

@@ -1,7 +1,7 @@
 #ifndef BUILDSYSTEM_H
 #define BUILDSYSTEM_H
 
-#include <filesystem>
+#include <string>
 
 class Project;
 
@@ -10,9 +10,10 @@ class BuildSystem {
 
 public:
   BuildSystem(std::string name);
-  void buildProject(Project project);
-  virtual void generate(Project *project, std::filesystem::path outputDirectory,
-                        std::string to_add) = 0;
+  virtual void buildProject(Project *project) = 0;
+  virtual void generate(Project *project) = 0;
+  virtual void run(Project *project) = 0;
+  virtual void clean(Project *project) = 0;
 };
 
 #endif // BUILDSYSTEM_H

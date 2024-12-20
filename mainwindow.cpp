@@ -252,6 +252,8 @@ void MainWindow::addRunConfiguration(RunConfiguration &rc) {
       p->setLastConfig(rc); // Set the last run configuration
     }
   });
+  Project *p = projectManager.getCurrentProject();
+  p->serialize();
 }
 
 void MainWindow::on_RunConfigurationsChanged() {
@@ -276,3 +278,54 @@ void MainWindow::on_pushButton_clicked() {
     reloadTreeView();
   }
 }
+
+void MainWindow::on_actionAbout_ProjmanQt_triggered() {
+  QMessageBox::about(this, "About ProjmanQt",
+                     "Simple programming project manager in Qt.\n\nPaul "
+                     "Passeron & Paul Cheron 2024-2025");
+}
+
+void MainWindow::on_actionBuild_triggered() {
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    QMessageBox::critical(this, "No Project Opened",
+                          "Please open a project before trying to build.");
+    return;
+  }
+  BuildSystem *b;
+  b = p->getBuildSystem();
+  if (b != nullptr) {
+    b->generate(p);
+    b->buildProject(p);
+  }
+}
+
+void MainWindow::on_actionRun_triggered() {
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    QMessageBox::critical(this, "No Project Opened",
+                          "Please open a project before trying to run.");
+    return;
+  }
+  BuildSystem *b;
+  b = p->getBuildSystem();
+  if (b != nullptr) {
+    b->run(p);
+  }
+}
+
+void MainWindow::on_actionClean_triggered()
+{
+    Project *p = projectManager.getCurrentProject();
+    if (p == nullptr) {
+        QMessageBox::critical(this, "No Project Cleaned",
+                              "Please open a project before trying to run.");
+        return;
+    }
+    BuildSystem *b;
+    b = p->getBuildSystem();
+    if (b != nullptr) {
+        b->clean(p);
+    }
+}
+

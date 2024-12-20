@@ -3,6 +3,7 @@
 #include "invalidprojectdialog.h"
 #include "language.h"
 #include "languagemanager.h"
+#include "pythonproject.h"
 #include "qimage.h"
 #include "qjsondocument.h"
 #include "qjsonvalue.h"
@@ -50,9 +51,12 @@ Project *ProjectManager::fromLanguage(Language *lang, std::string name,
   std::cout << typeid(*lang).name() << std::endl;
   if (lang->getName() == "C++") {
     return new CppProject(name, description, p);
-  } else {
-    QMessageBox::critical(nullptr, "Error", "Failed to find lang");
   }
+  if (lang->getName() == "Python") {
+    return new PythonProject(name, description, p);
+  }
+
+  QMessageBox::critical(nullptr, "Error", "Failed to find lang");
   return nullptr;
 }
 

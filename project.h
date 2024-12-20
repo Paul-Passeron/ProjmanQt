@@ -17,13 +17,13 @@ class Project : public QObject {
   std::string name;
   std::string description;
   std::filesystem::path p;
-  BuildSystem *buildSystem;
   std::vector<RunConfiguration> runConfigurations;
   int last_config = -1;
   bool is_dirty = false;
 
 protected:
   Language *language;
+  BuildSystem *buildSystem;
 
 public:
   Project(std::string name, std::string description, std::filesystem::path p);

@@ -12,3 +12,8 @@ RunArgsDialog::~RunArgsDialog()
 {
     delete ui;
 }
+
+std::string RunArgsDialog::getArgs() const
+{
+    return ui->lineEdit->text().toStdString();
+}
