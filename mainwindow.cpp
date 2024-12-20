@@ -5,6 +5,9 @@
 #include "newrunconfigurationdialog.h"
 #include "projectinfos.h"
 #include "projectmanager.h"
+#include "qabstractitemmodel.h"
+#include "qfilesystemmodel.h"
+#include "qfilesystemwatcher.h"
 #include "qmessagebox.h"
 #include "qnamespace.h"
 #include "runconfiguration.h"
@@ -16,8 +19,10 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QSortFilterProxyModel>
+#include <QTimer>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -29,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(&projectManager, &ProjectManager::currentProjectChanged, this,
           &MainWindow::on_currentProjectChanged);
   ui->searchBar->setVisible(false);
+  ui->pushButton->setVisible(false);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -69,6 +75,7 @@ void MainWindow::on_currentProjectChanged() {
 
   Project *p = projectManager.getCurrentProject();
   ui->searchBar->setVisible(true);
+  ui->pushButton->setVisible(true);
   ui->projectOpenedLabel->setText(QString::fromStdString(p->getName()));
   ui->treeView->setEnabled(true);
   updateTreeView();
@@ -82,18 +89,26 @@ void MainWindow::on_currentProjectChanged() {
   connect(p, &Project::runConfigurationsChanged, this,
           &MainWindow::on_RunConfigurationsChanged);
   on_RunConfigurationsChanged();
+  std::filesystem::current_path(p->getPath() / p->getSanitized());
 }
 
-void MainWindow::updateTreeView() {
+void MainWindow::reloadTreeView() {
+  std::cout << "UPDATING ...." << std::endl;
+
   Project *project = projectManager.getCurrentProject();
   if (project == nullptr) {
     return;
   }
   std::filesystem::path projectPath = project->getPath();
 
+  delete fileSystemModel;
+  delete proxyModel;
+
   fileSystemModel = new QFileSystemModel;
   proxyModel = new QSortFilterProxyModel(this);
+
   fileSystemModel->setRootPath("/");
+
   proxyModel->setSourceModel(fileSystemModel);
   proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
   proxyModel->setRecursiveFilteringEnabled(true);
@@ -104,6 +119,61 @@ void MainWindow::updateTreeView() {
   auto index = fileSystemModel->index(
       QDir(projectPath / project->getSanitized()).absolutePath());
   ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
+}
+
+void MainWindow::onTreeViewDoubleClicked(const QModelIndex &index) {
+  if (!index.isValid()) {
+    return; // Ensure the index is valid
+  }
+  QModelIndex sourceIndex = proxyModel->mapToSource(index);
+  // Get the file path or item name from the model
+  std::string filePath = fileSystemModel->filePath(sourceIndex).toStdString();
+
+  if (externCommand.empty()) {
+    externCommand = "code";
+  }
+  if (std::filesystem::is_regular_file(filePath)) {
+    std::string command = externCommand + " " + filePath;
+    int code;
+    Utils::exec(command.c_str(), &code);
+    // launching external editor
+  }
+}
+
+void MainWindow::updateTreeView() {
+  Project *project = projectManager.getCurrentProject();
+
+  // Unfortunately, this does not work on every machine
+
+  watcher.addPath(QString::fromStdString(
+      (project->getPath() / project->getSanitized()).string()));
+  connect(&watcher, &QFileSystemWatcher::directoryChanged, this,
+          &MainWindow::reloadTreeView);
+
+  connect(&watcher, &QFileSystemWatcher::fileChanged, this,
+          &MainWindow::reloadTreeView);
+
+  if (project == nullptr) {
+    return;
+  }
+  std::filesystem::path projectPath = project->getPath();
+
+  fileSystemModel = new QFileSystemModel;
+  proxyModel = new QSortFilterProxyModel(this);
+  fileSystemModel->setRootPath("/");
+
+  proxyModel->setSourceModel(fileSystemModel);
+  proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  proxyModel->setRecursiveFilteringEnabled(true);
+  connect(ui->searchBar, &QLineEdit::textChanged, this,
+          &MainWindow::filterFiles);
+
+  ui->treeView->setModel(proxyModel);
+  auto index = fileSystemModel->index(
+      QDir(projectPath / project->getSanitized()).absolutePath());
+  ui->treeView->setRootIndex(proxyModel->mapFromSource(index));
+  connect(ui->treeView, &QTreeView::doubleClicked, this,
+          &MainWindow::onTreeViewDoubleClicked);
 }
 
 void MainWindow::on_actionRun_Last_Configuration_triggered() {
@@ -199,5 +269,10 @@ void MainWindow::on_RunConfigurationsChanged() {
   std::vector<RunConfiguration> &configs = project->getConfigs();
   for (auto &config : configs) {
     addRunConfiguration(config);
+  }
+}
+void MainWindow::on_pushButton_clicked() {
+  if (projectManager.getCurrentProject() != nullptr) {
+    reloadTreeView();
   }
 }

@@ -6,8 +6,8 @@
 #include "qfilesystemmodel.h"
 #include "qsortfilterproxymodel.h"
 #include "runconfiguration.h"
+#include <QFileSystemWatcher>
 #include <QLabel>
-
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -41,12 +41,27 @@ private slots:
 
   void on_RunConfigurationsChanged();
 
+  void reloadTreeView();
+
+  void on_pushButton_clicked();
+
+  void onTreeViewDoubleClicked(const QModelIndex &index);
+
 private:
   Ui::MainWindow *ui;
+
   ProjectInfos *infos = nullptr;
+
   QFileSystemModel *fileSystemModel;
+
   QSortFilterProxyModel *proxyModel;
+
+  QFileSystemWatcher watcher;
+
+  std::string externCommand;
+
   void updateTreeView();
+
   void addRunConfiguration(RunConfiguration &rc);
 };
 #endif // MAINWINDOW_H
