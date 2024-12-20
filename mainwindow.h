@@ -9,6 +9,7 @@
 #include <QFileSystemWatcher>
 #include <QLabel>
 #include <QMainWindow>
+#include <QSettings>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,8 +25,10 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-private slots:
+  private slots:
   void on_actionExit_triggered();
+
+  void on_actionConfigure_editor_triggered();
 
   void on_actionNew_Project_triggered();
 
@@ -55,7 +58,7 @@ private slots:
 
   void on_actionClean_triggered();
 
-  private:
+private:
   Ui::MainWindow *ui;
 
   ProjectInfos *infos = nullptr;

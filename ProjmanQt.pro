@@ -14,8 +14,8 @@ SOURCES += \
     clanguage.cpp \
     cpplanguage.cpp \
     cppproject.cpp \
+    cproject.cpp \
     invalidprojectdialog.cpp \
-    javalanguage.cpp \
     language.cpp \
     languagemanager.cpp \
     main.cpp \
@@ -27,10 +27,12 @@ SOURCES += \
     projectinfos.cpp \
     projectmanager.cpp \
     projectserializer.cpp \
+    pythonbuildsystem.cpp \
     pythonlanguage.cpp \
     pythonproject.cpp \
     runargsdialog.cpp \
     runconfiguration.cpp \
+    settingsdialog.cpp \
     utils.cpp
 
 HEADERS += \
@@ -39,6 +41,7 @@ HEADERS += \
     cmakebuildsystem.h \
     cpplanguage.h \
     cppproject.h \
+    cproject.h \
     invalidprojectdialog.h \
     javalanguage.h \
     language.h \
@@ -51,10 +54,12 @@ HEADERS += \
     projectinfos.h \
     projectmanager.h \
     projectserializer.h \
+    pythonbuildsystem.h \
     pythonlanguage.h \
     pythonproject.h \
     runargsdialog.h \
     runconfiguration.h \
+    settingsdialog.h \
     utils.h
 
 FORMS += \
@@ -63,7 +68,8 @@ FORMS += \
     newprojectdialog.ui \
     newrunconfigurationdialog.ui \
     projectinfos.ui \
-    runargsdialog.ui
+    runargsdialog.ui \
+    settingsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

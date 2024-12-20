@@ -2,7 +2,6 @@
 
 #include "clanguage.h"
 #include "cpplanguage.h"
-#include "javalanguage.h"
 #include "language.h"
 #include "pythonlanguage.h"
 
@@ -26,7 +25,6 @@ std::vector<Language *> LanguageManager::getAllLanguages() {
   if (languages.size() == 0) {
     languages.emplace_back(new CppLanguage);
     languages.emplace_back(new CLanguage);
-    languages.emplace_back(new JavaLanguage);
     languages.emplace_back(new PythonLanguage);
   }
   return languages;

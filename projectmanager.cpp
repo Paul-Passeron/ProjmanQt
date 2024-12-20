@@ -1,5 +1,6 @@
 #include "projectmanager.h"
 #include "cppproject.h"
+#include "cproject.h"
 #include "invalidprojectdialog.h"
 #include "language.h"
 #include "languagemanager.h"
@@ -51,6 +52,9 @@ Project *ProjectManager::fromLanguage(Language *lang, std::string name,
   std::cout << typeid(*lang).name() << std::endl;
   if (lang->getName() == "C++") {
     return new CppProject(name, description, p);
+  }
+  if (lang->getName() == "C") {
+    return new CProject(name, description, p);
   }
   if (lang->getName() == "Python") {
     return new PythonProject(name, description, p);

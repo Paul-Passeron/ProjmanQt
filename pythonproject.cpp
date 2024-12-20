@@ -1,12 +1,14 @@
 #include "pythonproject.h"
 #include "pythonlanguage.h"
 #include "utils.h"
+#include "pythonbuildsystem.h"
 #include <fstream>
 
 PythonProject::PythonProject(std::string name, std::string description,
                              std::filesystem::path p)
     : Project(name, description, p) {
   this->language = new PythonLanguage();
+    this->buildSystem = new PythonBuildSystem();
 }
 
 void generateSampleFile(const std::filesystem::path &p) {

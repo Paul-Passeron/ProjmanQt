@@ -10,7 +10,9 @@
 #include "qfilesystemwatcher.h"
 #include "qmessagebox.h"
 #include "qnamespace.h"
+#include "qsettings.h"
 #include "runconfiguration.h"
+#include "settingsdialog.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
 #include <QFileDialog>
@@ -35,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::on_currentProjectChanged);
   ui->searchBar->setVisible(false);
   ui->pushButton->setVisible(false);
+  QSettings settings("ensiie", "projmanqt");
+  externCommand = settings.value("externCommand").toString().toStdString();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -314,18 +318,27 @@ void MainWindow::on_actionRun_triggered() {
   }
 }
 
-void MainWindow::on_actionClean_triggered()
-{
-    Project *p = projectManager.getCurrentProject();
-    if (p == nullptr) {
-        QMessageBox::critical(this, "No Project Cleaned",
-                              "Please open a project before trying to run.");
-        return;
-    }
-    BuildSystem *b;
-    b = p->getBuildSystem();
-    if (b != nullptr) {
-        b->clean(p);
-    }
+void MainWindow::on_actionClean_triggered() {
+  Project *p = projectManager.getCurrentProject();
+  if (p == nullptr) {
+    QMessageBox::critical(this, "No Project Cleaned",
+                          "Please open a project before trying to run.");
+    return;
+  }
+  BuildSystem *b;
+  b = p->getBuildSystem();
+  if (b != nullptr) {
+    b->clean(p);
+  }
 }
 
+void MainWindow::on_actionConfigure_editor_triggered() {
+  SettingsDialog *d = new SettingsDialog(externCommand);
+  if (d->exec() != QDialog::Accepted) {
+    return;
+  }
+  externCommand = d->getEditor();
+  QSettings("ensiie", "projmanqt")
+      .setValue("externCommand", QString::fromStdString(externCommand));
+  delete d;
+}

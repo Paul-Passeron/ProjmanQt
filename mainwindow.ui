@@ -140,6 +140,9 @@
    <property name="text">
     <string>New Project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpen_Project">
    <property name="icon">
@@ -147,6 +150,9 @@
    </property>
    <property name="text">
     <string>Open Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionExit">
@@ -167,6 +173,9 @@
    <property name="text">
     <string>Build</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionRun">
    <property name="icon">
@@ -186,6 +195,9 @@
    <property name="text">
     <string>Clean</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
   </action>
   <action name="actionNew_Configuration">
    <property name="icon">
@@ -194,6 +206,9 @@
    <property name="text">
     <string>New Configuration</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+N</string>
+   </property>
   </action>
   <action name="actionRun_Last_Configuration">
    <property name="icon">
@@ -201,6 +216,9 @@
    </property>
    <property name="text">
     <string>Run Last Configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+R</string>
    </property>
   </action>
   <action name="actionConfigure_editor">
@@ -217,6 +235,9 @@
    </property>
    <property name="text">
     <string>About ProjmanQt</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>
